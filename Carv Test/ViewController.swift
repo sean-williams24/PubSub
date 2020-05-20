@@ -7,6 +7,7 @@
 //
 
 import CoreBluetooth
+import CoreMotion
 import UIKit
 
 class ViewController: UIViewController, CBPeripheralDelegate, CBCentralManagerDelegate {
@@ -16,23 +17,23 @@ class ViewController: UIViewController, CBPeripheralDelegate, CBCentralManagerDe
     
     
     var centralManager: CBCentralManager?
-
+    var motionManager: CMMotionManager!
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
         centralManager = CBCentralManager(delegate: self, queue: nil)
         
-        Events.subscribe(name: "BT") { eventData in
-            let message = eventData as? String ?? "No Message"
-            self.label.text = message
+        motionManager = CMMotionManager()
+        motionManager.startAccelerometerUpdates(to: .main) { (data, error) in
+            if error != nil {
+                print(error?.localizedDescription as Any)
+            } else {
+                if let data = data {
+                    Events.publish(name: "Accel", args: data)
+                }
+            }
         }
-        
-        
-//        Events.subscribe(name: "Temp") { eventData in
-//            self.title = eventData as? String ?? "No Message"
-//        }
-        
     }
 
 
@@ -42,7 +43,7 @@ class ViewController: UIViewController, CBPeripheralDelegate, CBCentralManagerDe
     
     
     @IBAction func sliderDidSlide(_ sender: UISlider) {
-        Events.publish(name: "Temp", args: "Temperature: \(sender.value)")
+        Events.publish(name: "Temp", args: sender.value)
     }
     
 }
