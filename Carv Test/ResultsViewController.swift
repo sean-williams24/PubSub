@@ -17,18 +17,18 @@ class ResultsViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        Events.subscribe(name: "Temp") { tempMessage in
+        
+        PubSub.subscribe(event: .Temperature) { tempMessage in
             let temp = tempMessage as? Float ?? 0
             self.tempLabel.text = "Temperature: \(temp)"
         }
         
-        Events.subscribe(name: "BT") { eventData in
+        PubSub.subscribe(event: .Bluetooth) { eventData in
              let message = eventData as? String ?? "No Message"
             self.title = message
          }
         
-        Events.subscribe(name: "Accel") { eventData in
+        PubSub.subscribe(event: .Acceleromter) { eventData in
             let accelData = eventData as? CMAccelerometerData
             if let accelData = accelData {
                 self.accelLabel.text = "Accelerometer Z value: \(accelData.acceleration.z)"

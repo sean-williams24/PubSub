@@ -18,7 +18,8 @@ class ViewController: UIViewController, CBPeripheralDelegate, CBCentralManagerDe
     
     var centralManager: CBCentralManager?
     var motionManager: CMMotionManager!
-
+    var events = PubSub()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -30,7 +31,7 @@ class ViewController: UIViewController, CBPeripheralDelegate, CBCentralManagerDe
                 print(error?.localizedDescription as Any)
             } else {
                 if let data = data {
-                    Events.publish(name: "Accel", args: data)
+                    PubSub.publish(event: .Acceleromter, data: data)
                 }
             }
         }
@@ -38,13 +39,12 @@ class ViewController: UIViewController, CBPeripheralDelegate, CBCentralManagerDe
 
 
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
-        Events.publish(name: "BT", args: "Bluetooth state has changed to code: \(central.state.rawValue)")
+        PubSub.publish(event: .Bluetooth, data: "Bluetooth state has changed to code: \(central.state.rawValue)")
     }
     
     
     @IBAction func sliderDidSlide(_ sender: UISlider) {
-        Events.publish(name: "Temp", args: sender.value)
+        PubSub.publish(event: .Temperature, data: sender.value)
     }
-    
 }
 
