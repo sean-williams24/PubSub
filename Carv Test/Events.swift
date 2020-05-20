@@ -6,8 +6,6 @@
 //  Copyright © 2020 Sean Williams. All rights reserved.
 //
 
-import Combine
-import CoreBluetooth
 import Foundation
 
 struct Listener {
@@ -17,20 +15,23 @@ struct Listener {
 
 class Events {
     
-    var listeners: [Listener] = [];
+    static var listeners: [Listener] = []
     
-    func publish(name: String, args: Any) {
-        for consumer in self.listeners {
-            if(consumer.name == name) {
-                consumer.handler(args);
+    static func publish(name: String, args: Any) {
+        for listener in self.listeners {
+            if(listener.name == name) {
+                listener.handler(args)
             }
         }
     }
     
-    func subscribe(name: String, handler: @escaping (Any) -> Void) {
+    static func subscribe(name: String, handler: @escaping (Any) -> Void) {
+        print("subscribe called")
         self.listeners.append(
             Listener(name: name, handler: handler)
         )
+        
+        print(self.listeners)
     }
     
 }
